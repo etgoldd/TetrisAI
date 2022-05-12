@@ -100,7 +100,7 @@ class MoveFinder:  # TODO give it the ability to find placements under overhangs
             grid_board[coord[0]][coord[1]] = True
         return grid_board
 
-    def add_piece_to_board_temp_from_board(self, placement: tuple[np.ndarray[int, int], int]):
+    def add_piece_to_board_temp_from_board(self, placement: tuple[np.ndarray, int]):
         self.board_temp = np.copy(self.board)
 
         # These next two lines are used instead of simply self.active_piece_squares because we want to rotate the piece

@@ -7,39 +7,39 @@ class Tetromino:
         self.tetromino_code = tetromino_code
         self.coords = np.array([3, 0])
         base_rotation_grid_mappings = \
-                                   {1: np.array([
-                                    [0, 0, 0, 0],
-                                    [1, 1, 1, 1],
-                                    [0, 0, 0, 0],
-                                    [0, 0, 0, 0]]).T,
-                                   2: np.array([
-                                       [2, 0, 0],
-                                       [2, 2, 2],
-                                       [0, 0, 0]]).T,
+            {1: np.array([
+                [0, 0, 0, 0],
+                [1, 1, 1, 1],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]]).T,
+             2: np.array([
+                 [2, 0, 0],
+                 [2, 2, 2],
+                 [0, 0, 0]]).T,
 
-                                   3: np.array([
-                                       [0, 0, 3],
-                                       [3, 3, 3],
-                                       [0, 0, 0]]).T,
+             3: np.array([
+                 [0, 0, 3],
+                 [3, 3, 3],
+                 [0, 0, 0]]).T,
 
-                                   4: np.array([
-                                       [4, 4],
-                                       [4, 4]]),
+             4: np.array([
+                 [4, 4],
+                 [4, 4]]),
 
-                                   5: np.array([
-                                       [0, 5, 5],
-                                       [5, 5, 0],
-                                       [0, 0, 0]]).T,
+             5: np.array([
+                 [0, 5, 5],
+                 [5, 5, 0],
+                 [0, 0, 0]]).T,
 
-                                   6: np.array([
-                                       [0, 6, 0],
-                                       [6, 6, 6],
-                                       [0, 0, 0]]).T,
+             6: np.array([
+                 [0, 6, 0],
+                 [6, 6, 6],
+                 [0, 0, 0]]).T,
 
-                                   7: np.array([
-                                       [7, 7, 0],
-                                       [0, 7, 7],
-                                       [0, 0, 0]]).T}
+             7: np.array([
+                 [7, 7, 0],
+                 [0, 7, 7],
+                 [0, 0, 0]]).T}
 
         self.base_rotation_grid = np.copy(base_rotation_grid_mappings.get(self.tetromino_code))
 

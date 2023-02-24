@@ -1,6 +1,6 @@
 import numpy as np
-import _tetris
-import _tetromino
+
+from Game import tetris, tetromino
 
 LINE_POINT_DICT = {0: 0,
                    1: 100,
@@ -9,9 +9,9 @@ LINE_POINT_DICT = {0: 0,
                    4: 800}
 
 
-class MoveFinder:  # TODO give it the ability to find placements under overhangs
+class MoveFinder:
 
-    def __init__(self, board_obj: _tetris.TetrisBoard):
+    def __init__(self, board_obj: tetris.TetrisBoard):
         self.board_obj = board_obj
         self.board = self.generate_board()
         self.board_temp = self.board
@@ -55,7 +55,8 @@ class MoveFinder:  # TODO give it the ability to find placements under overhangs
             for x in range(-max_left_relative, 10 - max_right_relative):
                 coords = np.array([x, np.min(column_heights[
                                              x + max_left_relative: x + max_right_relative + 1]) - max_height_relative])
-                # The +1 after max_right_reduction is because indexes arent inclusive at the end, ie: arr[0:1] returns one value
+                # The +1 after max_right_reduction is because indexes arent inclusive at the end
+                # ie: arr[0:1] returns one value
                 coords += [0, 1]
                 while not self.check_collision(squares=coords + self.active_piece_squares):
                     coords += [0, 1]
@@ -81,7 +82,7 @@ class MoveFinder:  # TODO give it the ability to find placements under overhangs
             max_height_relative = right_bottom_edges[1]
             max_left_relative = np.min(self.active_piece_squares, axis=0)[0]
 
-    def update_piece(self, piece: _tetromino.Tetromino):
+    def update_piece(self, piece: tetromino.Tetromino):
         self.active_piece_grid: np.ndarray = piece.base_rotation_grid
         self.active_piece_squares = np.array(np.nonzero(self.active_piece_grid)).T
         self.active_piece_code = piece.tetromino_code
@@ -223,7 +224,9 @@ class MoveFinder:  # TODO give it the ability to find placements under overhangs
 
             self.update_piece(alternative_piece)
             self.find_surface_pieces(is_hold=True)
-            allowed_locations += self.allowed_locations  # The value of self.allowed_locations is changed by self.find_surface_pieces
+
+            # The value of self.allowed_locations is changed by self.find_surface_pieces
+            allowed_locations += self.allowed_locations
 
             values_part += self.generate_values_for_active_piece()
 
@@ -239,6 +242,8 @@ class MoveFinder:  # TODO give it the ability to find placements under overhangs
                     height += 1
                 else:
                     break
+
+            # They dont reach height - 1, they reach height, but its simpler to calculate things this way
             column_heights.append(
-                height - 1)  # They dont reach height - 1, they reach height, but its simpler to calculate things this way
+                height - 1)
         return column_heights

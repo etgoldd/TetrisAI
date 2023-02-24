@@ -1,5 +1,7 @@
 import numpy as np
-import _tetromino as pieces
+from typing import Optional
+
+from Game import tetromino as pieces
 
 JLSTZ_WALL_KICKS = {'0-1': [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)],
                     '1-0': [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],
@@ -38,7 +40,7 @@ class TetrisBoard:
 
         self.active_piece: pieces.Tetromino = self.bag[self.bag_index]
         self.next: pieces.Tetromino = self.bag[self.bag_index + 1]
-        self.hold: pieces.Tetromino = None
+        self.hold: Optional[pieces.Tetromino] = None
         self.allowed_hold = True
 
         self.all_pieces = [self.active_piece]
@@ -121,7 +123,7 @@ class TetrisBoard:
 
         succeeded = False
         # get the wall kick tests according to which piece it is and how its being rotated
-        wall_kick_tests = []
+        wall_kick_tests: list[tuple]
         if self.active_piece.tetromino_code == 1:
             wall_kick_tests = L_WALL_KICKS.get(rotation_key)
         else:
@@ -129,7 +131,8 @@ class TetrisBoard:
 
         # rotates the piece
         self.active_piece.rotation_grid = np.rot90(self.active_piece.rotation_grid, k=direction)
-        for test in wall_kick_tests:  # self.run_test moves and rotates the piece on its own, so no need to do that again
+        for test in wall_kick_tests:
+            # self.run_test moves and rotates the piece on its own, so no need to do that again
             if self.run_test(test=test):
                 succeeded = True
                 break
@@ -328,8 +331,6 @@ class TetrisBoard:
         while bag[0].tetromino_code not in [1, 2, 3, 6]:
             bag = np.random.permutation(bag)
         return bag
-
-    # TODO: add custom bag mixer, so that the bags of all the tettings can be mixed in a uniform manner
 
     @staticmethod
     def are_any_inside_list(arr1, arr2):

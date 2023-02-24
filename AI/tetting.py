@@ -1,18 +1,18 @@
 from __future__ import annotations
-import numpy as np
-import _tetris
-import _tetAI
+
+from Game import tetris
+from AI import tetAI
 
 
 class Tetting:
 
-    def __init__(self, parents: [None, list[_tetAI.TetAI]], max_mutation: float, mutation_chance: int):
-        self.board: _tetris.TetrisBoard = _tetris.TetrisBoard()
+    def __init__(self, parents: [None, list[tetAI.TetAI]], max_mutation: float, mutation_chance: int):
+        self.board: tetris.TetrisBoard = tetris.TetrisBoard()
 
-        self.brain = _tetAI.TetAI(board=self.board,
-                                  parents=parents,
-                                  max_mutation=max_mutation,
-                                  mutation_chance=mutation_chance)
+        self.brain = tetAI.TetAI(board=self.board,
+                                 parents=parents,
+                                 max_mutation=max_mutation,
+                                 mutation_chance=mutation_chance)
         self.decision = []
         self.next_piece_flag = False
 

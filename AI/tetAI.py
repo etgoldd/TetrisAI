@@ -1,6 +1,7 @@
 from __future__ import annotations
 import numpy as np
-import _moveFinder
+
+from AI import moveFinder
 
 N_INPUTS = 6
 LAYER1_NEURONS = 10
@@ -12,7 +13,7 @@ class TetAI:
         self.max_mutation = max_mutation
         self.gene_stability = 100 - mutation_chance
 
-        self.input_generator = _moveFinder.MoveFinder(board_obj=board)
+        self.input_generator = moveFinder.MoveFinder(board_obj=board)
 
         self.valued_moves: np.ndarray[
             tuple[tuple[np.ndarray[int, int], int], np.ndarray[float, float, float, float, float, float]]]
@@ -50,7 +51,6 @@ class TetAI:
 
         self.possible_moves = np.array(self.valued_moves[0], dtype=object)
         self.inputs = np.array(self.valued_moves[1], dtype=float)
-
 
         self.layer1.forward(inputs=self.inputs)
 

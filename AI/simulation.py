@@ -1,7 +1,6 @@
 import numpy as np
-import _tetting
-import _tetAI
 
+from AI import tetting
 
 level_difficulty_mapping = {1: 36,
                             2: 30,
@@ -29,14 +28,13 @@ class Simulation:
         self.generation = 0
         self.tettings = np.array(
             [
-                _tetting.Tetting(parents=None,
-                                 max_mutation=self.max_mutation,
-                                 mutation_chance=self.mutation_chance)
+                tetting.Tetting(parents=None,
+                                max_mutation=self.max_mutation,
+                                mutation_chance=self.mutation_chance)
                 for _ in range(self.gen_size)
             ])
 
-        self.active_tetting: _tetting.Tetting = self.tettings[0]
-
+        self.active_tetting: tetting.Tetting = self.tettings[0]
         self.decision = []
         self.decision_index = 0
         self.tetting_index = 0
@@ -46,7 +44,7 @@ class Simulation:
     def run_generation(self):
         # TODO: Run all the tettings' games simultaneously
         for tetting in self.tettings:
-            self.active_tetting: _tetting.Tetting = tetting
+            self.active_tetting: tetting.Tetting = tetting
             while self.active_tetting.board.alive:
                 self.active_tetting.act()
 
@@ -84,9 +82,9 @@ class Simulation:
             self.next_tetting()
 
     def new_generation(self):
-        tettings_fitness = [tetting.board.score for tetting in self.tettings]
+        tettings_fitness = [_tetting.board.score for _tetting in self.tettings]
         argsorted_tettings_fitness = np.argsort(tettings_fitness)[::-1]
-        sorted_tettings_by_fitness: list[_tetting.Tetting] = [tetting for tetting in self.tettings[argsorted_tettings_fitness]]
+        sorted_tettings_by_fitness: list[tetting.Tetting] = [_tetting for _tetting in self.tettings[argsorted_tettings_fitness]]
 
         print(f"Best score in generation {self.generation}: ", sorted_tettings_by_fitness[0].board.score)
 
@@ -97,9 +95,9 @@ class Simulation:
             if index == self.single_reproduction:
                 break
 
-            self.tettings[index] = _tetting.Tetting(parents=[top_tetting.brain],
-                                                    max_mutation=self.max_mutation,
-                                                    mutation_chance=self.mutation_chance)
+            self.tettings[index] = tetting.Tetting(parents=[top_tetting.brain],
+                                                   max_mutation=self.max_mutation,
+                                                   mutation_chance=self.mutation_chance)
             index += 1
 
         n_top_tettings_taken = int(self.n_for_reproduction / 2)
@@ -116,9 +114,9 @@ class Simulation:
         while not_full:
             for first_tetting_index in range(self.n_for_reproduction):
                 for second_tetting_index in range(first_tetting_index, self.n_for_reproduction):
-                    self.tettings[index] = _tetting.Tetting(parents=[tettings_for_breeding[first_tetting_index].brain, tettings_for_breeding[second_tetting_index].brain],
-                                                            max_mutation=self.max_mutation,
-                                                            mutation_chance=self.mutation_chance)
+                    self.tettings[index] = tetting.Tetting(parents=[tettings_for_breeding[first_tetting_index].brain, tettings_for_breeding[second_tetting_index].brain],
+                                                           max_mutation=self.max_mutation,
+                                                           mutation_chance=self.mutation_chance)
                     index += 1
                     if index == self.gen_size:
                         break

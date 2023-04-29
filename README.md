@@ -10,4 +10,5 @@ Since the model converges into a highly optimal playing style so quickly, theres
 To install the requirements, run the following line while in the root directory of the project:   
  `python3 -m pip install -r requirements.txt`
 
-To run the project, run main.py using the interpreter on which you install the requirements
+To run the project, run main.py using the interpreter on which you install the requirements, or simply:   
+ `python3 main.py`

@@ -7,7 +7,7 @@ The project includes a deep learning model that uses genetic algorithms to impro
 Since the model converges into a highly optimal playing style so quickly, theres no saving or loading of models.
 
 ### How to use
-To install the requirements, run the following line while in the root directory of the project:
+To install the requirements, run the following line while in the root directory of the project: \n
  `python3 -m pip install -r requirements.txt`
 
 To run the project, run main.py using the interpreter on which you install the requirements

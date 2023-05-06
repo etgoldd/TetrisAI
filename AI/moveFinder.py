@@ -2,15 +2,10 @@ import numpy as np
 
 from Game import tetris, tetromino
 
-LINE_POINT_DICT = {0: 0,
-                   1: 100,
-                   2: 300,
-                   3: 500,
-                   4: 800}
+LINE_POINT_DICT = {0: 0, 1: 100, 2: 300, 3: 500, 4: 800}
 
 
 class MoveFinder:
-
     def __init__(self, board_obj: tetris.TetrisBoard):
         self.board_obj = board_obj
         self.board = self.generate_board()
@@ -18,14 +13,18 @@ class MoveFinder:
 
         self.column_heights_temp = self.find_column_heights(self.board_temp)
 
-        self.tetris_streak_from_own_moves = False  # TODO remember to remove this line, or implement next move knowledge
+        self.tetris_streak_from_own_moves = (
+            False  # TODO remember to remove this line, or implement next move knowledge
+        )
 
-        self.allowed_locations: list[tuple[np.ndarray[int, int], int, [int]]] = []
+        self.allowed_locations: list[tuple[np.ndarray[int, int], int, list[int]]] = []
         self.active_piece_grid: np.ndarray = board_obj.active_piece.base_rotation_grid
         self.active_piece_squares = np.array(np.nonzero(self.active_piece_grid)).T
         self.active_piece_code = self.board_obj.active_piece.tetromino_code
 
-        self.valued_moves: list[tuple[tuple[np.ndarray[int, int], int, [int]], np.ndarray[float]]] = []
+        self.valued_moves: list[
+            tuple[tuple[np.ndarray[int, int], int, list[int]], np.ndarray[float]]
+        ] = []
 
     def find_surface_pieces(self, is_hold: bool):
         self.allowed_locations = []
@@ -53,12 +52,23 @@ class MoveFinder:
             rotation_commands = [rotation] if rotation != 2 else [1, 1]
 
             for x in range(-max_left_relative, 10 - max_right_relative):
-                coords = np.array([x, np.min(column_heights[
-                                             x + max_left_relative: x + max_right_relative + 1]) - max_height_relative])
+                coords = np.array(
+                    [
+                        x,
+                        np.min(
+                            column_heights[
+                                x + max_left_relative : x + max_right_relative + 1
+                            ]
+                        )
+                        - max_height_relative,
+                    ]
+                )
                 # The +1 after max_right_reduction is because indexes arent inclusive at the end
                 # ie: arr[0:1] returns one value
                 coords += [0, 1]
-                while not self.check_collision(squares=coords + self.active_piece_squares):
+                while not self.check_collision(
+                    squares=coords + self.active_piece_squares
+                ):
                     coords += [0, 1]
                 coords -= [0, 1]
 
@@ -95,7 +105,7 @@ class MoveFinder:
         return False
 
     def generate_board(self):
-        grid_board = np.zeros((10, 21), dtype='bool')
+        grid_board = np.zeros((10, 21), dtype="bool")
 
         for coord in self.board_obj.occupied_squares:
             grid_board[coord[0]][coord[1]] = True
@@ -110,7 +120,9 @@ class MoveFinder:
 
         coords = placement[0]
         for relative_coords in place_squares:
-            self.board_temp[coords[0] + relative_coords[0]][coords[1] + relative_coords[1]] = True
+            self.board_temp[coords[0] + relative_coords[0]][
+                coords[1] + relative_coords[1]
+            ] = True
 
         self.column_heights_temp = self.find_column_heights(self.board_temp)
 
@@ -133,29 +145,34 @@ class MoveFinder:
         return points
 
     def get_bumpiness_and_cliffs(
-            self):  # Cliffs are 3-block tall height differences, no need to make a new function just for them
+        self,
+    ):  # Cliffs are 3-block tall height differences, no need to make a new function just for them
         bumpiness = 0
         cliffs = 0
-        index_adjuster = 0.5 if self.column_heights_temp[0] < self.column_heights_temp[9] else -0.5
+        index_adjuster = (
+            0.5 if self.column_heights_temp[0] < self.column_heights_temp[9] else -0.5
+        )
         start = int(round(0.5 + index_adjuster))
         end = int(round(8.5 + index_adjuster))
 
         for index in range(start, end):
-            difference = self.column_heights_temp[index] - self.column_heights_temp[index + 1]
-            bumpiness += difference ** 2
+            difference = (
+                self.column_heights_temp[index] - self.column_heights_temp[index + 1]
+            )
+            bumpiness += difference**2
             if difference >= 3:
                 cliffs += difference / 3
 
         if index_adjuster == 0.5:
             difference = self.column_heights_temp[0] - self.column_heights_temp[1]
             if difference > 0:
-                bumpiness += difference ** 2
+                bumpiness += difference**2
                 if difference >= 3:
                     cliffs += difference / 3
         else:
             difference = self.column_heights_temp[9] - self.column_heights_temp[8]
             if difference > 0:
-                bumpiness += difference ** 2
+                bumpiness += difference**2
                 if difference >= 3:
                     cliffs += difference / 3
 
@@ -172,7 +189,10 @@ class MoveFinder:
 
         for layer in range(1, 20):
             for column in range(0, 10):
-                if not self.board_temp[column][layer] and self.board_temp[column][layer - 1]:
+                if (
+                    not self.board_temp[column][layer]
+                    and self.board_temp[column][layer - 1]
+                ):
                     holes += 1
                     break
 
@@ -187,12 +207,18 @@ class MoveFinder:
             self.add_piece_to_board_temp_from_board(position[0:2])
             bumpiness_and_cliffs = self.get_bumpiness_and_cliffs()
 
-            values = np.array([self.get_points(self.board_obj.tetris_streak) / 800,  # Points
-                               np.exp((bumpiness_and_cliffs[0] - k) / k),  # Bumpiness
-                               bumpiness_and_cliffs[1] / 10,  # Cliffs
-                               (20 - self.get_maxH()) / 20,  # Max Height
-                               (20 - self.get_avgH()) / 20,  # Average Height TODO Average height doesn't matter
-                               self.get_holes()], dtype=float)  # Holes
+            values = np.array(
+                [
+                    self.get_points(self.board_obj.tetris_streak) / 800,  # Points
+                    np.exp((bumpiness_and_cliffs[0] - k) / k),  # Bumpiness
+                    bumpiness_and_cliffs[1] / 10,  # Cliffs
+                    (20 - self.get_maxH()) / 20,  # Max Height
+                    (20 - self.get_avgH())
+                    / 20,  # Average Height TODO Average height doesn't matter
+                    self.get_holes(),
+                ],
+                dtype=float,
+            )  # Holes
 
             values_part.append(values)
 
@@ -244,6 +270,5 @@ class MoveFinder:
                     break
 
             # They dont reach height - 1, they reach height, but its simpler to calculate things this way
-            column_heights.append(
-                height - 1)
+            column_heights.append(height - 1)
         return column_heights

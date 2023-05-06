@@ -1,22 +1,32 @@
 from __future__ import annotations
+from typing import Union
 
 from Game import tetris
 from AI import tetAI
 
 
 class Tetting:
-
-    def __init__(self, parents: [None, list[tetAI.TetAI]], max_mutation: float, mutation_chance: int):
+    def __init__(
+        self,
+        parents: Union[None, list[tetAI.TetAI]],
+        max_mutation: float,
+        mutation_chance: int,
+    ):
         self.board: tetris.TetrisBoard = tetris.TetrisBoard()
 
-        self.brain = tetAI.TetAI(board=self.board,
-                                 parents=parents,
-                                 max_mutation=max_mutation,
-                                 mutation_chance=mutation_chance)
+        self.brain = tetAI.TetAI(
+            board=self.board,
+            parents=parents,
+            max_mutation=max_mutation,
+            mutation_chance=mutation_chance,
+        )
         self.decision = []
         self.next_piece_flag = False
 
     def act(self, action: int):
+        """
+        Does a single action
+        """
         if 4 > action > 0:
             self.board.rotate_piece(action)
         elif action == 4:

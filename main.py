@@ -22,7 +22,7 @@ def main():
     elif selected_mode == "AI_MODE":
         simulation_scene.activate_scene()
     elif selected_mode == "SCOREBOARD":
-        scoreboard_scene.activate_scene({})
+        scoreboard_scene.activate_scene(player_data={})
 
 
 if __name__ == "__main__":

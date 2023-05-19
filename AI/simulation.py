@@ -145,12 +145,12 @@ class Simulation:
                 ]
             )
 
-        #  The birds and the bees
+        #  Generating new tettings from multiple parents
         not_full = True
         while not_full:
             for first_tetting_index in range(self.n_for_reproduction):
                 for second_tetting_index in range(
-                    first_tetting_index, self.n_for_reproduction
+                    first_tetting_index + 1, self.n_for_reproduction
                 ):
                     self.tettings[index] = tetting.Tetting(
                         parents=[

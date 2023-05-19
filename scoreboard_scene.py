@@ -2,14 +2,15 @@ import pygame as pyg
 import numpy as np
 import csv
 
-from utils import open_file as fileOpen
+
+TABLE_NAME = "Data/TetrisPlayerScoreboardDB.csv"
 
 
 def write_data(player_data: dict):
     # Initiating variable at function-wide scope
     index = -1
     # Attempt to get last index, if there is no last index, then the index is set to 1
-    with open(fileOpen.TABLE_NAME, mode="r") as csvfile:
+    with open(TABLE_NAME, mode="r") as csvfile:
         try:
             index = ""
             for character in csvfile.readlines()[-1]:
@@ -24,7 +25,7 @@ def write_data(player_data: dict):
     player_data_row = [index, player_data["name"], player_data["score"]]
 
     # Writing player data to the scoreboard
-    with open(fileOpen.TABLE_NAME, mode="a", newline="") as csvfile:
+    with open(TABLE_NAME, mode="a", newline="") as csvfile:
         csvwriter = csv.writer(csvfile, dialect="excel")
         csvwriter.writerow(player_data_row)
 
@@ -90,7 +91,7 @@ def activate_scene(player_data: dict):
 
         reset_index = False
 
-        with open(fileOpen.TABLE_NAME, mode="r") as csvfile:
+        with open(TABLE_NAME, mode="r") as csvfile:
             csvreader = csv.reader(csvfile, dialect="excel")
 
             # Blitting the headers
@@ -167,7 +168,7 @@ def activate_scene(player_data: dict):
     run = True
     scrolled = 0
 
-    with open(fileOpen.TABLE_NAME, mode="r") as csvfile:
+    with open(TABLE_NAME, mode="r") as csvfile:
         try:
             max_index = ""
             for character in csvfile.readlines()[-1]:
@@ -181,7 +182,7 @@ def activate_scene(player_data: dict):
     sort_type = 0
 
     # Loading all the scores into a sorted_scores
-    with open(fileOpen.TABLE_NAME, mode="r") as csvfile:
+    with open(TABLE_NAME, mode="r") as csvfile:
         csvreader = csv.reader(csvfile, dialect="excel")
 
         for sim in csvreader:

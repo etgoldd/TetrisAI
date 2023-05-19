@@ -3,37 +3,41 @@ from typing import Optional
 
 from Game import tetromino as pieces
 
-JLSTZ_WALL_KICKS = {'0-1': [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)],
-                    '1-0': [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],
-                    '1-2': [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],
-                    '2-1': [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)],
-                    '2-3': [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)],
-                    '3-2': [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],
-                    '3-0': [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],
-                    '0-3': [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)]}
+JLSTZ_WALL_KICKS = {
+    "0-1": [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)],
+    "1-0": [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],
+    "1-2": [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],
+    "2-1": [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)],
+    "2-3": [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)],
+    "3-2": [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],
+    "3-0": [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],
+    "0-3": [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)],
+}
 
-L_WALL_KICKS = {'0-1': [(0, 0), (-2, 0), (1, 0), (-2, 1), (1, -2)],
-                '1-0': [(0, 0), (2, 0), (-1, 0), (2, -1), (-1, 2)],
-                '1-2': [(0, 0), (-1, 0), (2, 0), (-1, -2), (2, 1)],
-                '2-1': [(0, 0), (1, 0), (-2, 0), (1, 2), (-2, -1)],
-                '2-3': [(0, 0), (2, 0), (-1, 0), (2, -1), (-1, 2)],
-                '3-2': [(0, 0), (-2, 0), (1, 0), (-2, 1), (1, -2)],
-                '3-0': [(0, 0), (1, 0), (-2, 0), (1, 2), (-2, -1)],
-                '0-3': [(0, 0), (-1, 0), (2, 0), (-1, -2), (2, 1)]}
+I_WALL_KICKS = {
+    "0-1": [(0, 0), (-2, 0), (1, 0), (-2, 1), (1, -2)],
+    "1-0": [(0, 0), (2, 0), (-1, 0), (2, -1), (-1, 2)],
+    "1-2": [(0, 0), (-1, 0), (2, 0), (-1, -2), (2, 1)],
+    "2-1": [(0, 0), (1, 0), (-2, 0), (1, 2), (-2, -1)],
+    "2-3": [(0, 0), (2, 0), (-1, 0), (2, -1), (-1, 2)],
+    "3-2": [(0, 0), (-2, 0), (1, 0), (-2, 1), (1, -2)],
+    "3-0": [(0, 0), (1, 0), (-2, 0), (1, 2), (-2, -1)],
+    "0-3": [(0, 0), (-1, 0), (2, 0), (-1, -2), (2, 1)],
+}
 
-LINE_POINT_DICT = {1: 100,
-                   2: 300,
-                   3: 500,
-                   4: 800}
+LINE_POINT_DICT = {1: 100, 2: 300, 3: 500, 4: 800}
 
 
 class TetrisBoard:
-
     def __init__(self):
-        self.first_bag = np.array([pieces.Tetromino(tetromino_code=code) for code in range(1, 8)],
-                                  dtype=pieces.Tetromino)
+        self.first_bag = np.array(
+            [pieces.Tetromino(tetromino_code=code) for code in range(1, 8)],
+            dtype=pieces.Tetromino,
+        )
         self.first_bag = self.random_generator(self.first_bag)
-        self.next_bag = self.random_generator(np.array([pieces.Tetromino(tetromino_code=code) for code in range(1, 8)]))
+        self.next_bag = self.random_generator(
+            np.array([pieces.Tetromino(tetromino_code=code) for code in range(1, 8)])
+        )
 
         self.bag = np.append(arr=self.first_bag, values=self.next_bag)
         self.bag_index = 0
@@ -56,22 +60,34 @@ class TetrisBoard:
 
         self.update_ghost()
 
-    def move(self, direction):
+    def move(self, direction: str):
         """
         Moves the piece
         :param direction: str => 'right' / 'left'
         """
-        if direction == 'right':
-            if self.active_piece.coords[0] + self.active_piece.rightmost_edge_relative_to_coords < 9:
+        if direction == "right":
+            if (
+                self.active_piece.coords[0]
+                + self.active_piece.rightmost_edge_relative_to_coords
+                < 9
+            ):
                 self.active_piece.coords += [1, 0]
                 self.active_piece.update_location()
-                if self.are_any_inside_list(arr1=self.active_piece.occupying_squares, arr2=self.occupied_squares):
+                if self.are_any_inside_list(
+                    arr1=self.active_piece.occupying_squares, arr2=self.occupied_squares
+                ):
                     self.active_piece.coords += [-1, 0]
-        elif direction == 'left':
-            if self.active_piece.coords[0] + self.active_piece.leftmost_edge_relative_to_coords > 0:
+        elif direction == "left":
+            if (
+                self.active_piece.coords[0]
+                + self.active_piece.leftmost_edge_relative_to_coords
+                > 0
+            ):
                 self.active_piece.coords += [-1, 0]
                 self.active_piece.update_location()
-                if self.are_any_inside_list(arr1=self.active_piece.occupying_squares, arr2=self.occupied_squares):
+                if self.are_any_inside_list(
+                    arr1=self.active_piece.occupying_squares, arr2=self.occupied_squares
+                ):
                     self.active_piece.coords += [1, 0]
 
         self.active_piece.update_location()
@@ -86,7 +102,7 @@ class TetrisBoard:
             self.occupied_squares.append(coord)
 
         """checking for cleared lines, then clearing them if they exist"""
-        cleared_lines = self.check_for_cleared_lines()
+        cleared_lines = self.get_cleared_lines()
         if cleared_lines:
             self.clear_lines(lines=cleared_lines)
 
@@ -95,7 +111,9 @@ class TetrisBoard:
         Drops the active piece downwards and sets it instantly
         """
         add_score = -1
-        while not self.are_any_inside_list(arr1=self.occupied_squares, arr2=self.active_piece.occupying_squares):
+        while not self.are_any_inside_list(
+            arr1=self.occupied_squares, arr2=self.active_piece.occupying_squares
+        ):
             add_score += 1
             self.active_piece.coords += [0, 1]
             self.active_piece.update_location()
@@ -109,7 +127,9 @@ class TetrisBoard:
         Updates the location of the ghost of the given piece in the parameter
         """
         self.active_piece.ghost.reset_location_to_piece()
-        while not self.are_any_inside_list(arr1=self.occupied_squares, arr2=self.active_piece.ghost.occupying_squares):
+        while not self.are_any_inside_list(
+            arr1=self.occupied_squares, arr2=self.active_piece.ghost.occupying_squares
+        ):
             self.active_piece.ghost.occupying_squares += [0, 1]
         self.active_piece.ghost.occupying_squares += [0, -1]
 
@@ -125,12 +145,14 @@ class TetrisBoard:
         # get the wall kick tests according to which piece it is and how its being rotated
         wall_kick_tests: list[tuple]
         if self.active_piece.tetromino_code == 1:
-            wall_kick_tests = L_WALL_KICKS.get(rotation_key)
+            wall_kick_tests = I_WALL_KICKS.get(rotation_key)
         else:
             wall_kick_tests = JLSTZ_WALL_KICKS.get(rotation_key)
 
         # rotates the piece
-        self.active_piece.rotation_grid = np.rot90(self.active_piece.rotation_grid, k=direction)
+        self.active_piece.rotation_grid = np.rot90(
+            self.active_piece.rotation_grid, k=direction
+        )
         for test in wall_kick_tests:
             # self.run_test moves and rotates the piece on its own, so no need to do that again
             if self.run_test(test=test):
@@ -140,9 +162,13 @@ class TetrisBoard:
         # if the test succeeds:
         if succeeded:
             self.update_ghost()
-            self.active_piece.rot_number = (self.active_piece.rot_number + direction) % 4
+            self.active_piece.rot_number = (
+                self.active_piece.rot_number + direction
+            ) % 4
         else:
-            self.active_piece.rotation_grid = np.rot90(self.active_piece.rotation_grid, k=-direction % 4)
+            self.active_piece.rotation_grid = np.rot90(
+                self.active_piece.rotation_grid, k=-direction % 4
+            )
 
     def run_test(self, test: tuple[int, int]):
         """
@@ -153,9 +179,17 @@ class TetrisBoard:
         self.active_piece.update_location()
         self.active_piece.update_edge()
 
-        if self.active_piece.coords[0] + self.active_piece.rightmost_edge_relative_to_coords > 9 or\
-                self.active_piece.coords[0] + self.active_piece.leftmost_edge_relative_to_coords < 0 or\
-                self.are_any_inside_list(arr1=self.active_piece.occupying_squares, arr2=self.occupied_squares):
+        if (
+            self.active_piece.coords[0]
+            + self.active_piece.rightmost_edge_relative_to_coords
+            > 9
+            or self.active_piece.coords[0]
+            + self.active_piece.leftmost_edge_relative_to_coords
+            < 0
+            or self.are_any_inside_list(
+                arr1=self.active_piece.occupying_squares, arr2=self.occupied_squares
+            )
+        ):
             self.active_piece.coords -= test
             self.active_piece.update_location()
             self.active_piece.update_edge()
@@ -174,18 +208,26 @@ class TetrisBoard:
         self.active_piece: pieces.Tetromino = self.bag[self.bag_index]
         self.next: pieces.Tetromino = self.bag[self.bag_index + 1]
 
-        if self.bag_index % 7 == 0:
+        if self.bag_index == 7:
             self.first_bag = self.next_bag
             self.bag_index -= 7
-            self.next_bag = self.random_generator(np.array([pieces.Tetromino(tetromino_code=code) for code in range(1, 8)]))
+            self.next_bag = self.random_generator(
+                np.array(
+                    [pieces.Tetromino(tetromino_code=code) for code in range(1, 8)]
+                )
+            )
 
             self.bag[:7] = self.first_bag
             self.bag[7:] = self.next_bag
 
-        if self.are_any_inside_list(arr1=self.active_piece.occupying_squares, arr2=self.occupied_squares):
+        if self.are_any_inside_list(
+            arr1=self.active_piece.occupying_squares, arr2=self.occupied_squares
+        ):
             self.active_piece.coords += [0, -2]
             self.active_piece.update_location()
-            if self.are_any_inside_list(arr1=self.active_piece.occupying_squares, arr2=self.occupied_squares):
+            if self.are_any_inside_list(
+                arr1=self.active_piece.occupying_squares, arr2=self.occupied_squares
+            ):
                 self.alive = False
 
         self.all_pieces.append(self.active_piece)
@@ -208,7 +250,10 @@ class TetrisBoard:
                 self.all_pieces.append(self.active_piece)
 
                 self.active_piece.coords = np.array([3, 0])
-                self.active_piece.rotation_grid = np.rot90(self.active_piece.rotation_grid, k=(4 - self.active_piece.rot_number) % 4)
+                self.active_piece.rotation_grid = np.rot90(
+                    self.active_piece.rotation_grid,
+                    k=(4 - self.active_piece.rot_number) % 4,
+                )
                 self.active_piece.rot_number = 0
                 self.active_piece.update_location()
                 self.active_piece.update_edge()
@@ -222,7 +267,9 @@ class TetrisBoard:
         self.active_piece.coords += (0, 1)
         self.active_piece.update_location()
 
-        if self.are_any_inside_list(arr1=self.occupied_squares, arr2=self.active_piece.occupying_squares):
+        if self.are_any_inside_list(
+            arr1=self.occupied_squares, arr2=self.active_piece.occupying_squares
+        ):
             self.active_piece.coords += (0, -1)
             self.active_piece.update_location()
 
@@ -254,9 +301,11 @@ class TetrisBoard:
                     squares_for_removal.append(index)
 
             if len(piece.occupying_squares) == 0:
-               pieces_for_removal.append(piece)
+                pieces_for_removal.append(piece)
 
-            piece.occupying_squares = np.delete(piece.occupying_squares, squares_for_removal, axis=0)
+            piece.occupying_squares = np.delete(
+                piece.occupying_squares, squares_for_removal, axis=0
+            )
 
         # deleting empty pieces
         for piece in pieces_for_removal:
@@ -293,7 +342,7 @@ class TetrisBoard:
 
         self.score += int(points_earned)
 
-    def check_for_cleared_lines(self) -> list[int]:
+    def get_cleared_lines(self) -> list[int]:
         lines_to_check = {coords[1] for coords in self.active_piece.occupying_squares}
         cleared_lines = []
         for line in lines_to_check:
@@ -310,7 +359,9 @@ class TetrisBoard:
     def pass_time(self):
         self.active_piece.coords += [0, 1]
         self.active_piece.update_location()
-        if self.are_any_inside_list(arr1=self.occupied_squares, arr2=self.active_piece.occupying_squares):
+        if self.are_any_inside_list(
+            arr1=self.occupied_squares, arr2=self.active_piece.occupying_squares
+        ):
             self.active_piece.coords += [0, -1]
             self.active_piece.update_location()
 
@@ -348,7 +399,9 @@ class TetrisBoard:
         return False
 
     @staticmethod
-    def get_index_of_tuple_in_list(value: tuple[int, int], arr2: list[tuple[int, int]]) -> int:
+    def get_index_of_tuple_in_list(
+        value: tuple[int, int], arr2: list[tuple[int, int]]
+    ) -> int:
         for index in range(len(arr2)):
             if value[0] == arr2[index][0] and value[1] == arr2[index][1]:
                 return index

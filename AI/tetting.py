@@ -2,19 +2,19 @@ from __future__ import annotations
 from typing import Union
 
 from Game import tetris
-from AI import tetAI
+from AI import tet_ai
 
 
 class Tetting:
     def __init__(
         self,
-        parents: Union[None, list[tetAI.TetAI]],
+        parents: Union[None, list[tet_ai.TetAI]],
         max_mutation: float,
         mutation_chance: int,
     ):
         self.board: tetris.TetrisBoard = tetris.TetrisBoard()
 
-        self.brain = tetAI.TetAI(
+        self.brain = tet_ai.TetAI(
             board=self.board,
             parents=parents,
             max_mutation=max_mutation,

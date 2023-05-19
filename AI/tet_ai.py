@@ -2,7 +2,8 @@ from __future__ import annotations
 from typing import Union
 import numpy as np
 
-from AI import moveFinder
+from Game.tetris import TetrisBoard
+from AI import move_finder
 
 N_INPUTS = 6
 LAYER1_NEURONS = 10
@@ -11,7 +12,7 @@ LAYER1_NEURONS = 10
 class TetAI:
     def __init__(
         self,
-        board,
+        board: TetrisBoard,
         parents: Union[None, list[TetAI]],
         max_mutation: float,
         mutation_chance: int,
@@ -19,7 +20,7 @@ class TetAI:
         self.max_mutation = max_mutation
         self.gene_stability = 100 - mutation_chance
 
-        self.input_generator = moveFinder.MoveFinder(board_obj=board)
+        self.input_generator = move_finder.MoveFinder(board_obj=board)
 
         self.valued_moves: np.ndarray[
             tuple[

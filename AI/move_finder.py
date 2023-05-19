@@ -104,7 +104,7 @@ class MoveFinder:
                 return True
         return False
 
-    def generate_board(self):
+    def generate_board(self) -> np.ndarray:
         grid_board = np.zeros((10, 21), dtype="bool")
 
         for coord in self.board_obj.occupied_squares:
@@ -259,7 +259,7 @@ class MoveFinder:
         self.valued_moves = [allowed_locations, values_part]
 
     @staticmethod
-    def find_column_heights(board):
+    def find_column_heights(board: np.ndarray):
         column_heights = []
         for column in board:
             height = 0
